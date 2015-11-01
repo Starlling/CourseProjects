@@ -20,11 +20,11 @@ public class Sorting {
 	public static void main(String[] args) {
 		Scanner input = new Scanner(System.in);
 		
-		// Prompt user for array size
+		// Prompt user for array size - trust the user input.
 		System.out.print("Array size (2048, 4096, 8192, 16384)? ");
 		int size = input.nextInt();
 		
-		// Prompt user for number of runs
+		// Prompt user for number of runs - trust the user input.
 		System.out.print("How many repeats? ");
 		int repeats = input.nextInt();
 		
@@ -39,25 +39,24 @@ public class Sorting {
 		System.out.println("MERGE SORT");
 		for (int z=0; z < repeats; z++) {
 			mergesort(genArray(size), z);
-			if (VERBOSE && z < repeats-1) System.out.println(); // For readability
+			if (VERBOSE && z < repeats-1) System.out.println();
 		}
 		
 		// Quick sort
 		System.out.println("QUICK SORT");
 		for (int z=0; z < repeats; z++) {
 			quicksort(genArray(size), z);
-			if (VERBOSE && z < repeats-1) System.out.println(); // For readability
+			if (VERBOSE && z < repeats-1) System.out.println();
 		}
 	}
 	
-	/* This method generates an array filled with pseudo-random numbers. The size
-	 * of the array is defined at the top of the class (SIZE).
+	/* This method generates an array filled with pseudo-random numbers.
 	 */
 	private static int[] genArray(int size) {
-		int[] a = new int[size]; // Create the array
-		Random rand = new Random(); // Fill it with random ints.
+		int[] a = new int[size];
+		Random rand = new Random();
 		for (int i=0; i < size; i++) {
-			a[i] = rand.nextInt(10000); // To make it easier on the eyes
+			a[i] = rand.nextInt(10000); // Between 0 and 10k to make it easier on the eyes
 		}
 		return a;
 	}
@@ -96,7 +95,6 @@ public class Sorting {
 		int temp, j;
 		// Iterate through the list, starting at the SECOND element (index 1)
 		for (int i=1; i < a.length; i++) {
-			
 			for (j = i; j > 0 && a[j-1] > a[j]; j--) {
 				comps++;
 				
@@ -114,9 +112,9 @@ public class Sorting {
 		System.out.println("\tRepeat " + (repeat+1) + "\t\tSize: " + a.length + "\t\tTime to sort: " + (endTime-startTime) + " milliseconds" + "\t\tMoves: " + moves + "\t\tComparisons: " + comps + "\t\tValidated: " + validate(a));
 	}
 	
-	/* This is the entry point of the mergesort algorithm. It sets up some variables,
-	 * starts a timer, then calls the mergeRecursive method, then prints the results.
-	 * Merge sort is O(n logn).
+	/* This is the entry point of the mergesort algorithm. It starts a timer, calls the mergesort()
+	 * method below, then prints the results.
+	 * Merge sort is O(n log n).
 	 */
 	private static void mergesort(int[] a, int repeat) {
 		print(a); // Print unsorted
@@ -125,9 +123,12 @@ public class Sorting {
 		mergesort(a, 0, a.length-1);
 		
 		long endTime = System.currentTimeMillis(); // End the timer
+
 		print(a); // Print sorted
 		System.out.println("\tRepeat " + (repeat+1) + "\t\tSize: " + a.length + "\t\tTime to sort: " + (endTime-startTime) + " milliseconds" + "\t\tMoves: " + mergeMoves + "\t\tComparisons: " + mergeComps + "\t\tValidated: " + validate(a) + "\t\tMerge Calls: " + mergeCalls);
-		mergeCalls = 0; mergeMoves = 0; mergeComps = 0; // Reset the counters when we finish for the next cycle.
+
+		// Reset the counters when we finish for the next cycle.
+		mergeCalls = 0; mergeMoves = 0; mergeComps = 0;
 	}
 	
 	/* This is the beginning of the mergesort algorithm. It is a recursive function

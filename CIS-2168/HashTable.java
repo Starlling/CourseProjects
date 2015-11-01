@@ -1,8 +1,8 @@
 /* Author: Stephen Guglielmo
  * Course: CIS-2168-03
- * Date: 2015-10-22
+ * Date: 2015-11-01
  * Project: Hash Table
- * Description: Implement a hash table. This uses chaining to resolve conflicts.
+ * Description: Implement a hash table for ints. Use chaining to resolve conflicts.
  */
 package hashtable;
 
@@ -10,12 +10,20 @@ public class HashTable {
 	private int howmany;
 	private final node[] table;
 	
-	/* Constructor. Requires a size. Size must be prime and approx double the expected
-	 * number of entries in the hash table.
+	/* Set this to the key you want to use for the hashing function.
+	 * eg: mod(i,MODULO_KEY)
+	 * This is used to calculate the hash key in the hash() method, as well as
+	 * used to determine the size of the hash key array since the max value of
+	 * mod(n,m) is m-1.
 	 */
-	public HashTable(int size) {
+	private final int MODULO_KEY = 13;
+	
+	/* Constructor. The size of the array is MODULO_KEY because the output range
+	 * of the hash() method is 0 to MODULO_KEY-1.
+	 */
+	public HashTable() {
 		this.howmany = 0;
-		this.table = new node[size];
+		this.table = new node[MODULO_KEY];
 	}
 	
 	/* This is the node class for the array of linked-lists.
@@ -32,11 +40,10 @@ public class HashTable {
 		}
 	}
 	
-	/* This is the hash function. The key used is "mod 13". It's a method for easy
-	 * modification in the future.
+	/* This is the hash function.
 	 */
 	private int hash(int i) {
-		return i % 13;
+		return i % MODULO_KEY;
 	}
 	
 	/* This inserts a value into the hash table using a linked list. If the hash
@@ -47,16 +54,18 @@ public class HashTable {
 		if (belongs(i))
 			return; // Don't add duplicates
 		
-		if (this.table[hash(i)] == null) {
+		int key = hash(i);
+		
+		if (this.table[key] == null) {
 			// The hash address is not used, so create a new node here.
-			this.table[hash(i)] = new node(i);
+			this.table[key] = new node(i);
 		
 		} else {
 			// Hash address is already pointing to a node. This implies there is
 			// one or more hash addresses already in use here. Add i to the front.
 			node next = new node(i);
-			next.link = this.table[hash(i)]; // Point the new node's link to the existing list
-			this.table[hash(i)] = next; // Point the array index to the new node
+			next.link = this.table[key]; // Point the new node's link to the existing list
+			this.table[key] = next; // Point the array index to the new node
 		}
 		
 		this.howmany++;
@@ -69,8 +78,10 @@ public class HashTable {
 		if (!belongs(i))
 			return; // Not in the table
 		
+		int key = hash(i);
+		
 		// Traverse though the linked list
-		node p = this.table[hash(i)]; // Pointer to traverse
+		node p = this.table[key]; // Pointer to traverse
 		node parent = null; // Keep track of parent
 		
 		while (p.info != i) { // Wont reach NULL because we know i is in the list
@@ -81,7 +92,7 @@ public class HashTable {
 		if (parent == null) {
 			// i is the first item. If i is the only item, p.link will be null, so
 			// this still works for that case as well.
-			this.table[hash(i)] = p.link;
+			this.table[key] = p.link;
 		
 		} else {
 			// i is somewhere after the beginning of the linked list. Set parent's
@@ -114,6 +125,7 @@ public class HashTable {
 				
 				String str = "";
 				while (p != null) {
+					
 					// Because nobody likes trailing commas...
 					if (str.equals(""))
 						str = Integer.toString(p.info);
@@ -132,11 +144,13 @@ public class HashTable {
 	 * if integer i is in the table or not.
 	 */
 	public boolean belongs(int i) {
-		if (this.table[hash(i)] == null)
+		int key = hash(i);
+		
+		if (this.table[key] == null)
 			return false;
 		
 		// We must traverse the list to see if i exists in it.
-		node p = this.table[hash(i)]; // Pointer to traverse the list
+		node p = this.table[key]; // Pointer to traverse the list
 		while (p != null && p.info != i) {
 			// Loop exits when we reach the end (null) or find i.
 			p = p.link;
